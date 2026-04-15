@@ -1,6 +1,6 @@
 {
-  "name": "sleep-community",
-  "version": "1.0.0",
+  "name": "sleep-community-official",
+  "version": "2.0.0",
   "private": true,
   "main": "server.js",
   "scripts": {

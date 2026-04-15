@@ -1,390 +1,1231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>침대는 장식용이다</title>
+  <style>
+    :root{
+      --bg:#0d1020;
+      --panel:#141936;
+      --panel-2:#1b2246;
+      --panel-3:#232c59;
+      --line:rgba(255,255,255,.08);
+      --text:#f3f5ff;
+      --muted:#aeb7df;
+      --accent:#6f7cff;
+      --accent-2:#8fa0ff;
+      --good:#39c28e;
+      --warn:#ffb84d;
+      --danger:#ff7676;
+      --shadow:0 18px 60px rgba(0,0,0,.35);
+      --radius:20px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:Inter, Pretendard, "Noto Sans KR", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(111,124,255,.24), transparent 28%),
+        radial-gradient(circle at top right, rgba(63,194,255,.14), transparent 22%),
+        linear-gradient(180deg, #0b0e1b, #0f1326 40%, #0b0e1b);
+      color:var(--text);
+      min-height:100vh;
+    }
+    button,input,textarea,select{font:inherit}
+    a{text-decoration:none;color:inherit}
 
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-sans);background:transparent}
-:root{--accent:#5B4CDB;--sidebar-w:220px}
-.app{display:flex;height:620px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);position:relative}
-.login-wrap{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--color-background-secondary)}
-.login-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:32px 28px;width:320px}
-.login-logo{text-align:center;margin-bottom:24px}
-.login-logo-icon{width:48px;height:48px;border-radius:14px;background:#EEEDFE;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
-.login-title{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
-.login-sub{font-size:13px;color:var(--color-text-secondary)}
-.lfield{margin-bottom:14px}
-.lfield label{display:block;font-size:12px;color:var(--color-text-secondary);margin-bottom:5px;font-weight:500}
-.lfield input{width:100%;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:9px 11px;font-size:14px;background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans);outline:none}
-.lfield input:focus{border-color:var(--accent)}
-.login-err{font-size:12px;color:#A32D2D;margin-bottom:10px;background:#FCEBEB;border:0.5px solid #F09595;border-radius:var(--border-radius-md);padding:7px 10px;display:none}
-.btn{padding:7px 14px;border-radius:var(--border-radius-md);font-size:13px;font-weight:500;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);transition:all .15s;width:100%}
-.btn:hover{background:var(--color-background-secondary)}
-.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-.btn-primary:hover{opacity:.88}
-.btn-sm{padding:5px 10px;font-size:12px;width:auto}
-.tab-bar{display:flex;gap:4px;margin-bottom:18px}
-.tab{flex:1;padding:8px;text-align:center;font-size:13px;cursor:pointer;border-radius:var(--border-radius-md);color:var(--color-text-secondary);border:0.5px solid transparent;transition:all .15s}
-.tab.active{background:var(--color-background-secondary);color:var(--color-text-primary);font-weight:500;border-color:var(--color-border-tertiary)}
-.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;background:var(--color-background-secondary)}
-.band-info{padding:16px 14px 12px;border-bottom:0.5px solid var(--color-border-tertiary)}
-.band-name{font-size:15px;font-weight:500;color:var(--color-text-primary)}
-.band-sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
-.user-row{display:flex;align-items:center;gap:8px;padding:10px 14px;border-top:0.5px solid var(--color-border-tertiary);margin-top:auto}
-.user-avatar{width:28px;height:28px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#3C3489;flex-shrink:0}
-.user-name{font-size:12px;color:var(--color-text-primary);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.logout-btn{font-size:11px;color:var(--color-text-secondary);cursor:pointer;padding:3px 6px;border-radius:4px;border:none;background:none}
-.logout-btn:hover{color:#A32D2D}
-.nav{padding:8px 6px;flex:1;overflow-y:auto}
-.nav-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:var(--border-radius-md);cursor:pointer;font-size:13px;color:var(--color-text-secondary);transition:all .15s;margin-bottom:2px}
-.nav-item:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
-.nav-item.active{background:var(--color-background-primary);color:var(--color-text-primary);font-weight:500}
-.nav-icon{width:15px;height:15px;flex-shrink:0}
-.main{flex:1;overflow:hidden;display:flex;flex-direction:column}
-.topbar{padding:14px 18px 12px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:space-between}
-.page-title{font-size:17px;font-weight:500;color:var(--color-text-primary)}
-.content{flex:1;overflow-y:auto;padding:18px}
-.member-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.member-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:18px 14px;text-align:center;background:var(--color-background-primary)}
-.avatar{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:500;margin:0 auto 9px}
-.member-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
-.member-role{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
-.setlist-list,.schedule-list,.memo-list{display:flex;flex-direction:column;gap:9px}
-.sl-card,.sc-card,.mo-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:13px 15px;background:var(--color-background-primary)}
-.card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px}
-.card-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
-.song-chips{display:flex;flex-wrap:wrap;gap:5px}
-.chip{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:20px;padding:2px 9px;font-size:11px;color:var(--color-text-secondary)}
-.sc-row{display:flex;gap:12px;align-items:center}
-.date-box{min-width:44px;text-align:center;border-radius:var(--border-radius-md);padding:5px 4px;background:var(--color-background-secondary)}
-.date-m{font-size:9px;color:var(--color-text-secondary);text-transform:uppercase}
-.date-d{font-size:18px;font-weight:500;color:var(--color-text-primary)}
-.sc-info{flex:1}
-.sc-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
-.sc-detail{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
-.mo-meta{display:flex;justify-content:space-between;margin-bottom:5px}
-.mo-author{font-size:12px;font-weight:500;color:var(--color-text-primary)}
-.mo-date{font-size:11px;color:var(--color-text-secondary)}
-.mo-body{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
-.del-btn{font-size:11px;color:var(--color-text-secondary);cursor:pointer;padding:2px 5px;border-radius:4px;border:none;background:none}
-.del-btn:hover{color:#A32D2D}
-.empty{text-align:center;padding:36px 20px;color:var(--color-text-secondary);font-size:13px}
-.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.38);display:flex;align-items:center;justify-content:center;z-index:100;border-radius:var(--border-radius-lg)}
-.modal{background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);padding:20px;width:300px;max-height:460px;overflow-y:auto}
-.modal h3{font-size:15px;font-weight:500;margin-bottom:14px;color:var(--color-text-primary)}
-.field{margin-bottom:11px}
-.field label{display:block;font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
-.field input,.field textarea,.field select{width:100%;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans)}
-.field textarea{resize:vertical;min-height:72px}
-.mfoot{display:flex;gap:7px;justify-content:flex-end;margin-top:14px}
-.admin-badge{font-size:10px;background:#EEEDFE;color:#3C3489;border-radius:20px;padding:1px 7px;font-weight:500}
-</style>
+    .auth-wrap{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:28px;
+      padding:32px;
+      align-items:stretch;
+    }
+    .hero,.auth-card{
+      border:1px solid var(--line);
+      background:rgba(20,25,54,.78);
+      backdrop-filter: blur(14px);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+    }
+    .hero{
+      padding:36px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      overflow:hidden;
+      position:relative;
+    }
+    .hero:before{
+      content:"";
+      position:absolute;inset:auto -80px -80px auto;
+      width:220px;height:220px;border-radius:50%;
+      background:radial-gradient(circle, rgba(111,124,255,.4), transparent 70%);
+      pointer-events:none;
+    }
+    .brand-chip{
+      display:inline-flex;align-items:center;gap:10px;
+      width:max-content;
+      padding:10px 14px;border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:#dfe5ff;font-size:13px;font-weight:700;
+      letter-spacing:.2px;
+    }
+    .brand-dot{
+      width:10px;height:10px;border-radius:50%;background:var(--accent);
+      box-shadow:0 0 12px rgba(111,124,255,.8);
+    }
+    .hero h1{
+      margin-top:22px;
+      font-size:clamp(34px,4vw,58px);
+      line-height:1.04;
+      letter-spacing:-1.6px;
+    }
+    .hero p{
+      margin-top:16px;
+      max-width:580px;
+      color:var(--muted);
+      font-size:16px;
+      line-height:1.7;
+    }
+    .hero-grid{
+      margin-top:26px;
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+    }
+    .mini-card{
+      padding:16px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+    }
+    .mini-card b{display:block;font-size:14px;margin-bottom:8px}
+    .mini-card span{color:var(--muted);font-size:13px;line-height:1.5}
+    .quote{
+      margin-top:18px;
+      padding:16px 18px;
+      border-radius:18px;
+      background:linear-gradient(135deg, rgba(111,124,255,.18), rgba(255,255,255,.03));
+      border:1px solid rgba(143,160,255,.24);
+      color:#e7ebff;
+      font-weight:700;
+      font-size:15px;
+    }
+    .auth-card{
+      width:min(440px,100%);
+      margin-left:auto;
+      padding:30px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+    .auth-card h2{font-size:28px;letter-spacing:-.5px}
+    .auth-card .sub{color:var(--muted);margin-top:8px;margin-bottom:24px}
+    .tabs{
+      display:grid;grid-template-columns:1fr 1fr;gap:8px;
+      margin-bottom:18px;
+      background:rgba(255,255,255,.03);
+      padding:6px;border-radius:16px;
+      border:1px solid var(--line);
+    }
+    .tab{
+      border:none;border-radius:12px;padding:12px;
+      background:transparent;color:var(--muted);
+      cursor:pointer;font-weight:700;
+    }
+    .tab.active{background:var(--accent);color:white}
+    .field{margin-bottom:14px}
+    .field label{display:block;font-size:13px;color:#d7ddff;margin-bottom:7px;font-weight:700}
+    .field input,.field textarea,.field select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px 15px;
+      color:var(--text);
+      background:rgba(255,255,255,.04);
+      outline:none;
+    }
+    .field textarea{min-height:110px;resize:vertical}
+    .field input:focus,.field textarea:focus,.field select:focus{
+      border-color:rgba(143,160,255,.65);
+      box-shadow:0 0 0 4px rgba(111,124,255,.14);
+    }
+    .err{
+      display:none;
+      padding:12px 14px;
+      border-radius:14px;
+      margin-bottom:14px;
+      background:rgba(255,118,118,.12);
+      border:1px solid rgba(255,118,118,.28);
+      color:#ffd1d1;
+      font-size:13px;
+      line-height:1.5;
+    }
+    .btn{
+      border:none;
+      padding:13px 16px;
+      border-radius:14px;
+      cursor:pointer;
+      transition:.18s ease;
+      font-weight:800;
+      letter-spacing:.1px;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:white;
+      box-shadow:0 10px 30px rgba(111,124,255,.28);
+    }
+    .btn-soft{
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      border:1px solid var(--line);
+    }
+    .btn-danger{
+      background:rgba(255,118,118,.12);
+      color:#ffd4d4;
+      border:1px solid rgba(255,118,118,.18);
+    }
+    .auth-actions{display:flex;gap:10px;margin-top:8px}
+    .hint{margin-top:16px;font-size:12px;color:var(--muted);line-height:1.6}
 
-<div class="app" id="app">
-  <div id="login-screen" class="login-wrap">
-    <div class="login-box">
-      <div class="login-logo">
-        <div class="login-logo-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <circle cx="9" cy="7" r="3.5" fill="#534AB7"/>
-            <path d="M2 19c0-3.9 3.1-7 7-7s7 3.1 7 7H2z" fill="#534AB7"/>
-            <circle cx="17" cy="7" r="2.8" fill="#AFA9EC"/>
-            <path d="M17 13.5c2.4 0 5.5 1.5 5.5 4.9H17" stroke="#AFA9EC" stroke-width="1.2" fill="none"/>
-          </svg>
+    .app{display:none;min-height:100vh}
+    .shell{
+      display:grid;
+      grid-template-columns:280px 1fr;
+      min-height:100vh;
+      gap:18px;
+      padding:18px;
+    }
+    .sidebar,.main-panel{
+      border:1px solid var(--line);
+      background:rgba(20,25,54,.82);
+      backdrop-filter:blur(12px);
+      box-shadow:var(--shadow);
+    }
+    .sidebar{
+      border-radius:28px;
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      min-height:calc(100vh - 36px);
+      position:sticky;top:18px;
+    }
+    .community-head{
+      padding:8px 4px 18px;
+      border-bottom:1px solid var(--line);
+    }
+    .community-name{
+      font-size:26px;font-weight:900;letter-spacing:-1px;
+      line-height:1.1;
+    }
+    .community-sub{
+      margin-top:10px;color:var(--muted);font-size:13px;line-height:1.6;
+    }
+    .status-row{
+      display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;
+    }
+    .pill{
+      padding:8px 10px;border-radius:999px;
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--line);
+      color:#dee4ff;font-size:12px;font-weight:700;
+    }
+    .nav{
+      display:flex;flex-direction:column;gap:8px;margin-top:18px;
+    }
+    .nav-btn{
+      display:flex;align-items:center;gap:12px;
+      border:none;background:transparent;color:var(--muted);
+      border-radius:16px;padding:13px 14px;text-align:left;cursor:pointer;font-weight:700;
+    }
+    .nav-btn:hover,.nav-btn.active{
+      background:rgba(111,124,255,.14);
+      color:white;
+      border:1px solid rgba(111,124,255,.24);
+    }
+    .nav-icon{
+      width:18px;text-align:center;opacity:.95
+    }
+    .side-bottom{
+      margin-top:auto;
+      border-top:1px solid var(--line);
+      padding-top:16px;
+    }
+    .user-box{
+      display:flex;gap:12px;align-items:center;
+      padding:12px;border-radius:18px;background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+    }
+    .avatar{
+      width:44px;height:44px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,#8997ff,#5b65ff);
+      color:white;font-weight:900;
+      flex-shrink:0;
+    }
+    .user-meta{min-width:0}
+    .user-meta b{display:block;font-size:14px}
+    .user-meta span{
+      display:block;color:var(--muted);font-size:12px;margin-top:4px;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .logout{
+      margin-top:10px;width:100%;
+    }
+
+    .main-panel{
+      border-radius:28px;
+      padding:18px;
+      min-height:calc(100vh - 36px);
+      overflow:hidden;
+    }
+    .topbar{
+      display:flex;justify-content:space-between;align-items:flex-start;gap:18px;
+      padding:8px 4px 18px;
+      border-bottom:1px solid var(--line);
+    }
+    .topbar h2{
+      font-size:32px;letter-spacing:-1px;
+    }
+    .topbar p{
+      color:var(--muted);margin-top:8px;line-height:1.6
+    }
+    .top-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .content{
+      height:calc(100vh - 170px);
+      overflow:auto;
+      padding:18px 4px 0;
+    }
+    .grid-hero{
+      display:grid;
+      grid-template-columns:1.35fr .95fr;
+      gap:16px;
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius:24px;
+      background:rgba(255,255,255,.04);
+      padding:18px;
+    }
+    .card h3{
+      font-size:18px;margin-bottom:14px;letter-spacing:-.3px;
+    }
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;margin-top:16px;
+    }
+    .stat{
+      padding:16px;border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+    }
+    .stat b{display:block;font-size:28px;letter-spacing:-1px}
+    .stat span{color:var(--muted);font-size:12px;margin-top:8px;display:block}
+
+    .list{display:flex;flex-direction:column;gap:12px}
+    .item{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      padding:16px;
+    }
+    .item-head{
+      display:flex;justify-content:space-between;gap:12px;align-items:flex-start;
+      margin-bottom:8px;
+    }
+    .item-title{font-size:15px;font-weight:800}
+    .item-sub{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .chip{
+      padding:7px 10px;border-radius:999px;
+      background:rgba(111,124,255,.14);
+      border:1px solid rgba(111,124,255,.18);
+      color:#e8ecff;font-size:12px;font-weight:700;
+    }
+    .member-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+      gap:14px;
+    }
+    .member-card{
+      border:1px solid var(--line);
+      border-radius:22px;
+      background:rgba(255,255,255,.04);
+      padding:18px;text-align:center;
+    }
+    .member-card .avatar{margin:0 auto 12px}
+    .member-role{margin-top:6px;color:var(--muted);font-size:13px}
+    .muted{color:var(--muted)}
+    .empty{
+      text-align:center;
+      padding:50px 18px;
+      color:var(--muted);
+      border:1px dashed rgba(255,255,255,.12);
+      border-radius:22px;
+      background:rgba(255,255,255,.02);
+    }
+    .toolbar{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;
+      margin-bottom:14px;flex-wrap:wrap;
+    }
+    .search{
+      max-width:280px;
+      width:100%;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      padding:12px 14px;border-radius:14px;color:var(--text)
+    }
+
+    .feed-card{
+      display:flex;flex-direction:column;gap:12px;
+    }
+    .feed-top{display:flex;justify-content:space-between;gap:12px}
+    .feed-author{font-size:14px;font-weight:800}
+    .feed-meta{font-size:12px;color:var(--muted);margin-top:4px}
+    .feed-body{font-size:14px;line-height:1.8;color:#f2f4ff;white-space:pre-wrap}
+    .notice-tag{
+      display:inline-flex;padding:5px 9px;border-radius:999px;
+      background:rgba(255,184,77,.14);
+      border:1px solid rgba(255,184,77,.2);
+      color:#ffd796;font-size:11px;font-weight:800;
+      margin-right:8px;
+    }
+
+    .modal-overlay{
+      position:fixed;inset:0;
+      background:rgba(4,7,17,.52);
+      display:none;
+      align-items:center;justify-content:center;
+      z-index:50;
+      padding:18px;
+    }
+    .modal{
+      width:min(640px,100%);
+      max-height:min(86vh,920px);
+      overflow:auto;
+      border-radius:28px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(24,30,64,.98), rgba(17,22,46,.98));
+      box-shadow:var(--shadow);
+      padding:24px;
+    }
+    .modal-head{
+      display:flex;justify-content:space-between;gap:12px;align-items:center;
+      margin-bottom:16px;
+    }
+    .modal-head h3{font-size:24px;letter-spacing:-.6px}
+    .modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;flex-wrap:wrap}
+    .inline{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+    .admin-badge,.member-badge{
+      display:inline-flex;padding:5px 9px;border-radius:999px;
+      background:rgba(57,194,142,.14);
+      border:1px solid rgba(57,194,142,.18);
+      color:#b9ffe1;font-size:11px;font-weight:800;
+    }
+    .sub-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .small-btn{
+      padding:9px 12px;border-radius:12px;font-size:12px
+    }
+
+    @media (max-width: 1100px){
+      .auth-wrap{grid-template-columns:1fr;gap:20px}
+      .auth-card{margin:0;max-width:none}
+      .shell{grid-template-columns:1fr}
+      .sidebar{position:relative;top:auto;min-height:auto}
+      .main-panel{min-height:auto}
+      .content{height:auto;min-height:50vh}
+      .grid-hero{grid-template-columns:1fr}
+      .stats{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width: 720px){
+      .auth-wrap,.shell{padding:12px}
+      .hero,.auth-card,.sidebar,.main-panel{border-radius:22px}
+      .hero-grid,.inline,.stats{grid-template-columns:1fr}
+      .topbar{flex-direction:column}
+      .top-actions{justify-content:flex-start}
+      .community-name{font-size:24px}
+      .topbar h2{font-size:28px}
+    }
+  </style>
+</head>
+<body>
+  <section id="auth" class="auth-wrap">
+    <div class="hero">
+      <div>
+        <div class="brand-chip"><span class="brand-dot"></span> OFFICIAL COMMUNITY</div>
+        <h1>침대는<br>장식용이다</h1>
+        <p>
+          이름은 장난 같아도 안은 진짜 커뮤니티처럼. 멤버 관리, 셋리스트, 일정,
+          공지, 자유게시판까지 한곳에서 정리하는 단체 전용 허브.
+        </p>
+        <div class="hero-grid">
+          <div class="mini-card"><b>공지 & 피드</b><span>중요 공지와 자유 글을 나눠서 운영할 수 있음</span></div>
+          <div class="mini-card"><b>셋리스트 관리</b><span>공연별 곡 정리, 연습 목록 공유 가능</span></div>
+          <div class="mini-card"><b>멤버/일정</b><span>역할, 날짜, 장소까지 한눈에 확인</span></div>
         </div>
-        <div class="login-title" id="login-mode-title">침대는 장식용이다</div>
-        <div class="login-sub" id="login-mode-sub">여긴 자는 곳이 아니다</div>
       </div>
-      <div class="tab-bar">
-        <div class="tab active" id="tab-login" onclick="switchTab('login')">로그인</div>
-        <div class="tab" id="tab-signup" onclick="switchTab('signup')">회원가입</div>
+      <div class="quote" id="hero-quote">“오늘도 침대는 인테리어다.”</div>
+    </div>
+
+    <div class="auth-card">
+      <h2>커뮤니티 입장</h2>
+      <div class="sub">여긴 자는 곳이 아니라 굴러가는 곳이다.</div>
+
+      <div class="tabs">
+        <button class="tab active" id="tab-login" onclick="switchTab('login')">로그인</button>
+        <button class="tab" id="tab-signup" onclick="switchTab('signup')">회원가입</button>
       </div>
-      <div id="login-err" class="login-err"></div>
+
+      <div class="err" id="auth-error"></div>
+
       <div id="login-form">
-        <div class="lfield"><label>아이디</label><input id="l-id" placeholder="아이디 입력" autocomplete="username"></div>
-        <div class="lfield"><label>비밀번호</label><input id="l-pw" type="password" placeholder="비밀번호 입력" autocomplete="current-password"></div>
-        <button class="btn btn-primary" onclick="doLogin()">로그인</button>
+        <div class="field">
+          <label>아이디</label>
+          <input id="login-id" placeholder="아이디 입력" autocomplete="username">
+        </div>
+        <div class="field">
+          <label>비밀번호</label>
+          <input id="login-pw" type="password" placeholder="비밀번호 입력" autocomplete="current-password">
+        </div>
+        <div class="auth-actions">
+          <button class="btn btn-primary" style="width:100%" onclick="doLogin()">로그인</button>
+        </div>
       </div>
+
       <div id="signup-form" style="display:none">
-        <div class="lfield"><label>아이디</label><input id="s-id" placeholder="영문/숫자 조합"></div>
-        <div class="lfield"><label>비밀번호</label><input id="s-pw" type="password" placeholder="6자 이상"></div>
-        <div class="lfield"><label>닉네임</label><input id="s-nick" placeholder="밴드에서 불릴 이름"></div>
-        <button class="btn btn-primary" onclick="doSignup()">가입하기</button>
+        <div class="field">
+          <label>아이디</label>
+          <input id="signup-id" placeholder="2자 이상">
+        </div>
+        <div class="field">
+          <label>비밀번호</label>
+          <input id="signup-pw" type="password" placeholder="6자 이상">
+        </div>
+        <div class="field">
+          <label>닉네임</label>
+          <input id="signup-nick" placeholder="커뮤니티에서 표시될 이름">
+        </div>
+        <div class="auth-actions">
+          <button class="btn btn-primary" style="width:100%" onclick="doSignup()">가입하고 입장</button>
+        </div>
       </div>
+
+      <div class="hint">
+        첫 가입자는 자동으로 관리자가 된다. 관리자는 멤버, 셋리스트, 일정, 공지를 관리할 수 있다.
+      </div>
+    </div>
+  </section>
+
+  <section id="app" class="app">
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="community-head">
+          <div class="community-name">침대는 장식용이다</div>
+          <div class="community-sub">공식 단체 커뮤니티 · 정보 공유 · 일정 정리 · 내부 소통</div>
+          <div class="status-row">
+            <div class="pill" id="member-count-pill">멤버 0명</div>
+            <div class="pill" id="notice-count-pill">공지 0개</div>
+            <div class="pill" id="schedule-count-pill">일정 0개</div>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <button class="nav-btn active" data-page="dashboard"><span class="nav-icon">🏠</span>대시보드</button>
+          <button class="nav-btn" data-page="feed"><span class="nav-icon">📢</span>공지 / 게시판</button>
+          <button class="nav-btn" data-page="members"><span class="nav-icon">👥</span>멤버</button>
+          <button class="nav-btn" data-page="setlists"><span class="nav-icon">🎵</span>셋리스트</button>
+          <button class="nav-btn" data-page="schedule"><span class="nav-icon">🗓️</span>일정</button>
+        </nav>
+
+        <div class="side-bottom">
+          <div class="user-box">
+            <div class="avatar" id="me-avatar">?</div>
+            <div class="user-meta">
+              <b id="me-nick">-</b>
+              <span id="me-role-line">로그인 필요</span>
+            </div>
+          </div>
+          <button class="btn btn-soft logout" onclick="doLogout()">로그아웃</button>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <div class="topbar">
+          <div>
+            <h2 id="page-title">대시보드</h2>
+            <p id="page-sub">커뮤니티 전체 현황과 최신 소식을 한 번에 확인할 수 있다.</p>
+          </div>
+          <div class="top-actions" id="top-actions"></div>
+        </div>
+        <div class="content" id="content"></div>
+      </main>
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modal-title">추가</h3>
+        <button class="btn btn-soft small-btn" onclick="closeModal()">닫기</button>
+      </div>
+      <div id="modal-body"></div>
     </div>
   </div>
 
-  <div id="main-screen" style="display:none;flex:1;display:none;overflow:hidden">
-    <div class="sidebar">
-      <div class="band-info">
-        <div class="band-name">침대는 장식용이다</div>
-        <div class="band-sub" id="band-sub">멤버 0명</div>
-      </div>
-      <nav class="nav">
-        <div class="nav-item active" data-page="members">
-          <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><circle cx="6" cy="4.5" r="2.5"/><path d="M1 13c0-2.8 2.2-5 5-5s5 2.2 5 5H1z"/><circle cx="11" cy="4.5" r="2"/><path d="M11 9.5c1.7 0 4 1.1 4 3.5h-4"/></svg>
-          멤버
+  <script>
+    const ROLE_OPTIONS = ['보컬','기타','베이스','드럼','키보드','프로듀서','매니저','보컬/기타','보컬/베이스','기타/키보드','기타/드럼','기타/보컬'];
+    const QUOTES = [
+      '오늘도 침대는 인테리어다.',
+      '눕는 순간 패배다.',
+      '잠은 사치고 합주는 현실이다.',
+      '우리는 눕지 않는다.',
+      '각성 상태 유지 중.'
+    ];
+
+    let state = {
+      members: [],
+      setlists: [],
+      schedules: [],
+      posts: []
+    };
+    let me = null;
+    let page = 'dashboard';
+    let feedFilter = 'all';
+    let memberSearch = '';
+
+    function escapeHtml(str=''){
+      return str
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#39;");
+    }
+
+    function showAuthError(msg){
+      const el = document.getElementById('auth-error');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+    function hideAuthError(){
+      document.getElementById('auth-error').style.display = 'none';
+    }
+
+    function switchTab(tab){
+      hideAuthError();
+      document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+      document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+      document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+      document.getElementById('signup-form').style.display = tab === 'signup' ? 'block' : 'none';
+    }
+
+    async function api(path, options = {}){
+      const res = await fetch(path, {
+        headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+        ...options
+      });
+      const data = await res.json().catch(() => ({}));
+      return { ok: res.ok, status: res.status, data };
+    }
+
+    async function loadState(){
+      const { ok, data } = await api('/api/state');
+      if(ok && data.state){
+        state = data.state;
+      }
+      state.members ||= [];
+      state.setlists ||= [];
+      state.schedules ||= [];
+      state.posts ||= [];
+    }
+
+    async function saveState(){
+      await api('/api/state', {
+        method: 'POST',
+        body: JSON.stringify(state)
+      });
+    }
+
+    async function doSignup(){
+      const id = document.getElementById('signup-id').value.trim();
+      const pw = document.getElementById('signup-pw').value;
+      const nick = document.getElementById('signup-nick').value.trim();
+
+      if(!id || !pw || !nick) return showAuthError('모든 항목을 입력해주세요.');
+      if(id.length < 2) return showAuthError('아이디는 2자 이상이어야 해요.');
+      if(pw.length < 6) return showAuthError('비밀번호는 6자 이상이어야 해요.');
+
+      const { ok, data } = await api('/api/signup', {
+        method: 'POST',
+        body: JSON.stringify({ id, pw, nick })
+      });
+
+      if(!ok || !data.ok) return showAuthError(data.message || '가입에 실패했어요.');
+      me = data.user;
+      hideAuthError();
+      await loadState();
+      enterApp();
+    }
+
+    async function doLogin(){
+      const id = document.getElementById('login-id').value.trim();
+      const pw = document.getElementById('login-pw').value;
+
+      if(!id || !pw) return showAuthError('아이디와 비밀번호를 입력해주세요.');
+
+      const { ok, data } = await api('/api/login', {
+        method: 'POST',
+        body: JSON.stringify({ id, pw })
+      });
+
+      if(!ok || !data.ok) return showAuthError(data.message || '로그인에 실패했어요.');
+      me = data.user;
+      hideAuthError();
+      await loadState();
+      enterApp();
+    }
+
+    function doLogout(){
+      me = null;
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('auth').style.display = 'grid';
+      document.getElementById('login-id').value = '';
+      document.getElementById('login-pw').value = '';
+      hideAuthError();
+    }
+
+    function enterApp(){
+      document.getElementById('auth').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      document.getElementById('me-avatar').textContent = (me.nick || '?')[0];
+      document.getElementById('me-nick').textContent = me.nick;
+      document.getElementById('me-role-line').innerHTML = me.isAdmin
+        ? '<span class="admin-badge">관리자</span>'
+        : '<span class="member-badge">멤버</span>';
+      render();
+    }
+
+    function formatDate(dateString){
+      const d = new Date(dateString);
+      if(Number.isNaN(d.getTime())) return dateString || '-';
+      return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function formatDateTime(dateString){
+      const d = new Date(dateString);
+      if(Number.isNaN(d.getTime())) return dateString || '-';
+      return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }
+
+    function topActionButton(label, handler, variant='primary'){
+      return `<button class="btn ${variant === 'soft' ? 'btn-soft' : 'btn-primary'}" onclick="${handler}">${label}</button>`;
+    }
+
+    function renderTopActions(){
+      const el = document.getElementById('top-actions');
+      if(page === 'dashboard'){
+        el.innerHTML = me.isAdmin
+          ? topActionButton('공지 작성', 'openPostModal(true)') + topActionButton('일정 추가', 'openScheduleModal()', 'soft')
+          : topActionButton('글 작성', 'openPostModal(false)');
+        return;
+      }
+      if(page === 'feed'){
+        el.innerHTML = topActionButton(me.isAdmin ? '글 / 공지 작성' : '글 작성', `openPostModal(${me.isAdmin ? 'true' : 'false'})`);
+        return;
+      }
+      if(page === 'members'){
+        el.innerHTML = me.isAdmin ? topActionButton('멤버 추가', 'openMemberModal()') : '';
+        return;
+      }
+      if(page === 'setlists'){
+        el.innerHTML = me.isAdmin ? topActionButton('셋리스트 추가', 'openSetlistModal()') : '';
+        return;
+      }
+      if(page === 'schedule'){
+        el.innerHTML = me.isAdmin ? topActionButton('일정 추가', 'openScheduleModal()') : '';
+        return;
+      }
+      el.innerHTML = '';
+    }
+
+    function renderPageHead(){
+      const titles = {
+        dashboard: ['대시보드', '커뮤니티 전체 현황과 최신 소식을 한 번에 확인할 수 있다.'],
+        feed: ['공지 / 게시판', '중요 공지와 자유 글을 구분해서 운영할 수 있다.'],
+        members: ['멤버', '팀 구성과 역할을 깔끔하게 정리할 수 있다.'],
+        setlists: ['셋리스트', '공연/연습용 곡 목록을 묶어서 관리할 수 있다.'],
+        schedule: ['일정', '다가오는 연습과 공연 일정을 순서대로 확인할 수 있다.']
+      };
+      document.getElementById('page-title').textContent = titles[page][0];
+      document.getElementById('page-sub').textContent = titles[page][1];
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.page === page);
+      });
+      renderTopActions();
+      document.getElementById('member-count-pill').textContent = `멤버 ${state.members.length}명`;
+      document.getElementById('notice-count-pill').textContent = `공지 ${state.posts.filter(p => p.isNotice).length}개`;
+      document.getElementById('schedule-count-pill').textContent = `일정 ${state.schedules.length}개`;
+    }
+
+    function latestPosts(limit = 3, onlyNotice = false){
+      const arr = [...state.posts]
+        .filter(p => onlyNotice ? p.isNotice : true)
+        .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+      return arr.slice(0, limit);
+    }
+
+    function upcomingSchedules(limit = 4){
+      return [...state.schedules]
+        .sort((a,b) => new Date(a.date) - new Date(b.date))
+        .slice(0, limit);
+    }
+
+    function renderDashboard(){
+      const notices = latestPosts(3, true);
+      const recentFeed = latestPosts(4, false);
+      const upcoming = upcomingSchedules(4);
+
+      return `
+        <div class="grid-hero">
+          <div class="card">
+            <h3>커뮤니티 브리핑</h3>
+            <div class="item" style="background:linear-gradient(135deg, rgba(111,124,255,.18), rgba(255,255,255,.03));border-color:rgba(143,160,255,.2)">
+              <div class="item-title">오늘의 한마디</div>
+              <div class="item-sub" id="dashboard-quote" style="font-size:15px;color:#eef1ff;margin-top:10px"></div>
+            </div>
+            <div class="stats">
+              <div class="stat"><b>${state.members.length}</b><span>등록 멤버</span></div>
+              <div class="stat"><b>${state.setlists.length}</b><span>셋리스트</span></div>
+              <div class="stat"><b>${state.schedules.length}</b><span>전체 일정</span></div>
+              <div class="stat"><b>${state.posts.length}</b><span>전체 게시글</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>다가오는 일정</h3>
+            ${upcoming.length ? `
+              <div class="list">
+                ${upcoming.map((s,i)=>`
+                  <div class="item">
+                    <div class="item-head">
+                      <div>
+                        <div class="item-title">${escapeHtml(s.title)}</div>
+                        <div class="item-sub">${formatDate(s.date)} · ${escapeHtml(s.time || '시간 미정')} · ${escapeHtml(s.place || '장소 미정')}</div>
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            ` : `<div class="empty">등록된 일정이 아직 없다.</div>`}
+          </div>
         </div>
-        <div class="nav-item" data-page="setlist">
-          <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="3" width="12" height="1.5" rx="0.5"/><rect x="2" y="7" width="12" height="1.5" rx="0.5"/><rect x="2" y="11" width="8" height="1.5" rx="0.5"/></svg>
-          셋리스트
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px" class="dashboard-lower">
+          <div class="card">
+            <h3>중요 공지</h3>
+            ${notices.length ? `
+              <div class="list">
+                ${notices.map((p,i)=>feedCard(p, i, false)).join('')}
+              </div>
+            ` : `<div class="empty">공지부터 올리면 훨씬 공식 커뮤 느낌이 살아난다.</div>`}
+          </div>
+          <div class="card">
+            <h3>최신 게시글</h3>
+            ${recentFeed.length ? `
+              <div class="list">
+                ${recentFeed.map((p,i)=>feedCard(p, i, false)).join('')}
+              </div>
+            ` : `<div class="empty">아직 글이 없다. 첫 글을 남겨보자.</div>`}
+          </div>
         </div>
-        <div class="nav-item" data-page="schedule">
-          <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="3" width="12" height="11" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M5 2v2M11 2v2M2 7h12" stroke="currentColor" stroke-width="1.2"/></svg>
-          일정
+      `;
+    }
+
+    function feedCard(post, idx, withActions = true){
+      const realIndex = state.posts.findIndex(p => p.id === post.id);
+      const canDelete = me && (me.isAdmin || post.authorId === me.id);
+      return `
+        <div class="item feed-card">
+          <div class="feed-top">
+            <div>
+              <div class="feed-author">${post.isNotice ? '<span class="notice-tag">공지</span>' : ''}${escapeHtml(post.title)}</div>
+              <div class="feed-meta">${escapeHtml(post.author)} · ${formatDateTime(post.createdAt)}</div>
+            </div>
+            ${withActions && canDelete ? `
+              <div class="sub-actions">
+                <button class="btn btn-soft small-btn" onclick="removePost('${post.id}')">삭제</button>
+              </div>
+            ` : ''}
+          </div>
+          <div class="feed-body">${escapeHtml(post.body)}</div>
         </div>
-        <div class="nav-item" data-page="memo">
-          <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="12" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M5 6h6M5 9h4" stroke="currentColor" stroke-width="1.2"/></svg>
-          메모
+      `;
+    }
+
+    function renderFeed(){
+      let posts = [...state.posts].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+      if(feedFilter === 'notice') posts = posts.filter(p=>p.isNotice);
+      if(feedFilter === 'free') posts = posts.filter(p=>!p.isNotice);
+
+      return `
+        <div class="toolbar">
+          <div class="sub-actions">
+            <button class="btn ${feedFilter==='all'?'btn-primary':'btn-soft'} small-btn" onclick="setFeedFilter('all')">전체</button>
+            <button class="btn ${feedFilter==='notice'?'btn-primary':'btn-soft'} small-btn" onclick="setFeedFilter('notice')">공지</button>
+            <button class="btn ${feedFilter==='free'?'btn-primary':'btn-soft'} small-btn" onclick="setFeedFilter('free')">자유글</button>
+          </div>
+          <div class="muted" style="font-size:13px">최신순 정렬</div>
         </div>
-      </nav>
-      <div class="user-row">
-        <div class="user-avatar" id="sidebar-avatar">?</div>
-        <div>
-          <div class="user-name" id="sidebar-nick">-</div>
-          <div id="sidebar-badge"></div>
+        ${posts.length ? `
+          <div class="list">${posts.map(feedCard).join('')}</div>
+        ` : `<div class="empty">아직 게시글이 없다.</div>`}
+      `;
+    }
+
+    function renderMembers(){
+      const list = state.members.filter(m => {
+        const key = memberSearch.trim().toLowerCase();
+        if(!key) return true;
+        return `${m.name} ${m.role}`.toLowerCase().includes(key);
+      });
+
+      return `
+        <div class="toolbar">
+          <input class="search" placeholder="이름 / 역할 검색" value="${escapeHtml(memberSearch)}" oninput="memberSearch=this.value;render()">
+          <div class="muted" style="font-size:13px">총 ${list.length}명 표시 중</div>
         </div>
-        <button class="logout-btn" onclick="doLogout()">로그아웃</button>
-      </div>
-    </div>
-    <div class="main">
-      <div class="topbar">
-        <div><div class="page-title" id="page-title">멤버</div><div id="sleep-quote" style="font-size:11px;color:var(--color-text-secondary);margin-top:2px;"></div></div>
-        <button class="btn btn-primary btn-sm" id="add-btn" onclick="openAdd()">+ 추가</button>
-      </div>
-      <div class="content" id="content"></div>
-    </div>
-  </div>
+        ${list.length ? `
+          <div class="member-grid">
+            ${list.map((m)=>`
+              <div class="member-card">
+                <div class="avatar">${escapeHtml(m.name[0] || '?')}</div>
+                <div class="item-title">${escapeHtml(m.name)}</div>
+                <div class="member-role">${escapeHtml(m.role)}</div>
+                ${m.note ? `<div class="item-sub" style="margin-top:10px">${escapeHtml(m.note)}</div>`:''}
+                ${me.isAdmin ? `
+                  <div class="sub-actions" style="justify-content:center;margin-top:14px">
+                    <button class="btn btn-soft small-btn" onclick="editMember('${m.id}')">편집</button>
+                    <button class="btn btn-danger small-btn" onclick="removeMember('${m.id}')">삭제</button>
+                  </div>
+                `:''}
+              </div>
+            `).join('')}
+          </div>
+        ` : `<div class="empty">검색 결과가 없다.</div>`}
+      `;
+    }
 
-  <div class="modal-overlay" id="modal" style="display:none" onclick="if(event.target===this)closeModal()">
-    <div class="modal" id="modal-inner"></div>
-  </div>
-</div>
+    function renderSetlists(){
+      const list = [...state.setlists].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+      return list.length ? `
+        <div class="list">
+          ${list.map(s=>`
+            <div class="item">
+              <div class="item-head">
+                <div>
+                  <div class="item-title">${escapeHtml(s.title)}</div>
+                  <div class="item-sub">${escapeHtml(s.desc || '설명 없음')} · ${formatDateTime(s.createdAt)}</div>
+                </div>
+                ${me.isAdmin ? `<button class="btn btn-danger small-btn" onclick="removeSetlist('${s.id}')">삭제</button>`:''}
+              </div>
+              <div class="chips">
+                ${s.songs.map(song=>`<span class="chip">${escapeHtml(song)}</span>`).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : `<div class="empty">셋리스트가 아직 없다.</div>`;
+    }
 
-<script>
-const AC=[{bg:'#EEEDFE',c:'#3C3489'},{bg:'#E1F5EE',c:'#085041'},{bg:'#FAECE7',c:'#712B13'},{bg:'#FBEAF0',c:'#72243E'},{bg:'#E6F1FB',c:'#0C447C'},{bg:'#EAF3DE',c:'#27500A'},{bg:'#FAEEDA',c:'#633806'}];
-const ROLES=['보컬','기타','베이스','드럼','키보드','바이올린','피아노','색소폰','보컬/기타','보컬/베이스','기타/키보드'];
-let state={members:[],setlists:[],schedules:[],memos:[]};
-let users={};
-let me=null;
-let page='members';
+    function renderSchedule(){
+      const list = [...state.schedules].sort((a,b)=>new Date(a.date)-new Date(b.date));
+      return list.length ? `
+        <div class="list">
+          ${list.map(s=>`
+            <div class="item">
+              <div class="item-head">
+                <div>
+                  <div class="item-title">${escapeHtml(s.title)}</div>
+                  <div class="item-sub">${formatDate(s.date)} · ${escapeHtml(s.time || '시간 미정')} · ${escapeHtml(s.place || '장소 미정')}</div>
+                  ${s.desc ? `<div class="item-sub" style="margin-top:10px">${escapeHtml(s.desc)}</div>`:''}
+                </div>
+                ${me.isAdmin ? `<button class="btn btn-danger small-btn" onclick="removeSchedule('${s.id}')">삭제</button>`:''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : `<div class="empty">등록된 일정이 아직 없다.</div>`;
+    }
 
-async function loadAll(){
-  const r = await fetch('/api/state');
-  const data = await r.json();
-  state = data.state || {members:[],setlists:[],schedules:[],memos:[]};
-  if(!state.members)state.members=[];
-  if(!state.setlists)state.setlists=[];
-  if(!state.schedules)state.schedules=[];
-  if(!state.memos)state.memos=[];
-}
-async function saveState(){
-  await fetch('/api/state', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(state)
-  });
-}
-async function saveUsers(){}
+    function render(){
+      renderPageHead();
+      const content = document.getElementById('content');
+      const pages = {
+        dashboard: renderDashboard,
+        feed: renderFeed,
+        members: renderMembers,
+        setlists: renderSetlists,
+        schedule: renderSchedule
+      };
+      content.innerHTML = pages[page]();
+      const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+      const dq = document.getElementById('dashboard-quote');
+      if(dq) dq.textContent = `“${q}”`;
+    }
 
-function showErr(msg){const el=document.getElementById('login-err');el.textContent=msg;el.style.display='block';}
-function hideErr(){document.getElementById('login-err').style.display='none';}
-function switchTab(t){
-  hideErr();
-  document.getElementById('tab-login').classList.toggle('active',t==='login');
-  document.getElementById('tab-signup').classList.toggle('active',t==='signup');
-  document.getElementById('login-form').style.display=t==='login'?'block':'none';
-  document.getElementById('signup-form').style.display=t==='signup'?'block':'none';
-}
-async function doLogin(){
-  const id=document.getElementById('l-id').value.trim();
-  const pw=document.getElementById('l-pw').value;
-  if(!id||!pw){showErr('아이디와 비밀번호를 입력해주세요.');return;}
-  const res=await fetch('/api/login',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({id,pw})
-  });
-  const data=await res.json();
-  if(!data.ok){showErr(data.message||'로그인에 실패했어요.');return;}
-  me={id:data.user.id,nick:data.user.nick,isAdmin:data.user.isAdmin};
-  hideErr();
-  await loadAll();
-  enterApp();
-}
-async function doSignup(){
-  const id=document.getElementById('s-id').value.trim();
-  const pw=document.getElementById('s-pw').value;
-  const nick=document.getElementById('s-nick').value.trim();
-  if(!id||!pw||!nick){showErr('모든 항목을 입력해주세요.');return;}
-  if(id.length<2){showErr('아이디는 2자 이상이어야 해요.');return;}
-  if(pw.length<6){showErr('비밀번호는 6자 이상이어야 해요.');return;}
-  const res=await fetch('/api/signup',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({id,pw,nick})
-  });
-  const data=await res.json();
-  if(!data.ok){showErr(data.message||'가입에 실패했어요.');return;}
-  me={id:data.user.id,nick:data.user.nick,isAdmin:data.user.isAdmin};
-  hideErr();
-  await loadAll();
-  enterApp();
-}
-function doLogout(){
-  me=null;
-  document.getElementById('main-screen').style.display='none';
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('l-id').value='';
-  document.getElementById('l-pw').value='';
-  hideErr();
-}
-function enterApp(){
-  document.getElementById('login-screen').style.display='none';
-  const ms=document.getElementById('main-screen');
-  ms.style.display='flex';
-  document.getElementById('sidebar-nick').textContent=me.nick;
-  document.getElementById('sidebar-avatar').textContent=me.nick[0];
-  document.getElementById('sidebar-badge').innerHTML=me.isAdmin?'<span class="admin-badge">관리자</span>':'';
-  render();
-}
+    function openModal(title, bodyHtml){
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-body').innerHTML = bodyHtml;
+      document.getElementById('modal-overlay').style.display = 'flex';
+    }
 
-document.querySelectorAll('.nav-item').forEach(el=>el.addEventListener('click',()=>{page=el.dataset.page;render();}));
-document.getElementById('l-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-document.getElementById('l-id').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('l-pw').focus();});
+    function closeModal(){
+      document.getElementById('modal-overlay').style.display = 'none';
+    }
 
-function avStyle(i){const c=AC[i%AC.length];return `background:${c.bg};color:${c.c};`;}
-function initials(n){return n?n[0]:'?';}
+    function openMemberModal(memberId = null){
+      if(!me.isAdmin) return;
+      const m = memberId ? state.members.find(v => v.id === memberId) : null;
+      openModal(m ? '멤버 수정' : '멤버 추가', `
+        <div class="field">
+          <label>이름</label>
+          <input id="member-name" value="${escapeHtml(m?.name || '')}" placeholder="이름 입력">
+        </div>
+        <div class="field">
+          <label>역할</label>
+          <select id="member-role">
+            ${ROLE_OPTIONS.map(role=>`<option ${m?.role===role?'selected':''}>${role}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field">
+          <label>소개 / 메모</label>
+          <textarea id="member-note" placeholder="한 줄 소개나 메모">${escapeHtml(m?.note || '')}</textarea>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-soft" onclick="closeModal()">취소</button>
+          <button class="btn btn-primary" onclick="${m ? `saveMember('${m.id}')` : 'saveMember()'}">${m ? '저장' : '추가'}</button>
+        </div>
+      `);
+    }
 
-function renderMembers(){
-  if(!state.members.length)return`<div class="empty">아직 멤버가 없어요.<br>+ 추가 버튼으로 등록해보세요!</div>`;
-  return`<div class="member-grid">${state.members.map((m,i)=>`
-    <div class="member-card">
-      <div class="avatar" style="${avStyle(i)}">${initials(m.name)}</div>
-      <div class="member-name">${m.name}</div>
-      <div class="member-role">${m.role}</div>
-      ${me.isAdmin?`<div style="margin-top:9px;display:flex;gap:5px;justify-content:center"><button class="btn btn-sm" onclick="editMember(${i})">편집</button><button class="del-btn" onclick="delMember(${i})">삭제</button></div>`:''}
-    </div>`).join('')}</div>`;
-}
-function renderSetlist(){
-  if(!state.setlists.length)return`<div class="empty">셋리스트가 없어요.</div>`;
-  return`<div class="setlist-list">${state.setlists.map((s,i)=>`
-    <div class="sl-card">
-      <div class="card-head"><div class="card-title">${s.title}</div>${me.isAdmin?`<button class="del-btn" onclick="delSetlist(${i})">삭제</button>`:''}</div>
-      <div class="song-chips">${s.songs.map(sg=>`<span class="chip">${sg}</span>`).join('')}</div>
-    </div>`).join('')}</div>`;
-}
-function renderSchedule(){
-  const sorted=[...state.schedules].sort((a,b)=>new Date(a.date)-new Date(b.date));
-  if(!sorted.length)return`<div class="empty">일정이 없어요.</div>`;
-  const ms=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-  return`<div class="schedule-list">${sorted.map(s=>{
-    const d=new Date(s.date);const oi=state.schedules.indexOf(s);
-    return`<div class="sc-card"><div class="sc-row">
-      <div class="date-box"><div class="date-m">${ms[d.getMonth()]}</div><div class="date-d">${d.getDate()}</div></div>
-      <div class="sc-info"><div class="sc-title">${s.title}</div><div class="sc-detail">${[s.place,s.time].filter(Boolean).join(' · ')}</div></div>
-      ${me.isAdmin?`<button class="del-btn" onclick="delSchedule(${oi})">삭제</button>`:''}
-    </div></div>`;}).join('')}</div>`;
-}
-function renderMemo(){
-  if(!state.memos.length)return`<div class="empty">메모가 없어요.</div>`;
-  return`<div class="memo-list">${[...state.memos].reverse().map((m,ri)=>{
-    const i=state.memos.length-1-ri;
-    const canDel=me.isAdmin||m.authorId===me.id;
-    return`<div class="mo-card">
-      <div class="mo-meta"><span class="mo-author">${m.author}</span><div style="display:flex;gap:6px;align-items:center"><span class="mo-date">${m.date}</span>${canDel?`<button class="del-btn" onclick="delMemo(${i})">삭제</button>`:''}</div></div>
-      <div class="mo-body">${m.body}</div>
-    </div>`;}).join('')}</div>`;
-}
+    async function saveMember(memberId = null){
+      const name = document.getElementById('member-name').value.trim();
+      const role = document.getElementById('member-role').value;
+      const note = document.getElementById('member-note').value.trim();
+      if(!name) return;
 
-function render(){
-  const titles={members:'멤버',setlist:'셋리스트',schedule:'일정',memo:'메모'};
-  document.getElementById('page-title').textContent=titles[page];
-  document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
-  const addBtn=document.getElementById('add-btn');
-  addBtn.style.display=(page==='memo'||me.isAdmin)?'block':'none';
-  document.getElementById('band-sub').textContent=`멤버 ${state.members.length}명`;
-  const fns={members:renderMembers,setlist:renderSetlist,schedule:renderSchedule,memo:renderMemo};
-  document.getElementById('content').innerHTML=fns[page]();
-}
+      if(memberId){
+        const m = state.members.find(v => v.id === memberId);
+        if(m){
+          m.name = name;
+          m.role = role;
+          m.note = note;
+        }
+      }else{
+        state.members.push({
+          id: crypto.randomUUID(),
+          name, role, note,
+          createdAt: new Date().toISOString()
+        });
+      }
+      await saveState();
+      closeModal();
+      render();
+    }
 
-function showModal(html){document.getElementById('modal-inner').innerHTML=html;document.getElementById('modal').style.display='flex';}
-function closeModal(){document.getElementById('modal').style.display='none';}
+    async function removeMember(memberId){
+      if(!confirm('멤버를 삭제할까?')) return;
+      state.members = state.members.filter(m => m.id !== memberId);
+      await saveState();
+      render();
+    }
 
-function openAdd(){
-  if(page==='members'&&me.isAdmin)showAddMember();
-  else if(page==='setlist'&&me.isAdmin)showAddSetlist();
-  else if(page==='schedule'&&me.isAdmin)showAddSchedule();
-  else if(page==='memo')showAddMemo();
-}
-function showAddMember(){showModal(`<h3>멤버 추가</h3>
-  <div class="field"><label>이름</label><input id="mn" placeholder="이름"></div>
-  <div class="field"><label>파트</label><select id="mr">${ROLES.map(r=>`<option>${r}</option>`).join('')}</select></div>
-  <div class="mfoot"><button class="btn btn-sm" onclick="closeModal()">취소</button><button class="btn btn-primary btn-sm" onclick="addMember()">추가</button></div>`);}
-function addMember(){
-  const name=document.getElementById('mn').value.trim();const role=document.getElementById('mr').value;
-  if(!name)return;state.members.push({name,role});saveState();render();closeModal();
-}
-window.editMember=function(i){
-  const m=state.members[i];
-  showModal(`<h3>멤버 편집</h3>
-    <div class="field"><label>이름</label><input id="mn" value="${m.name}"></div>
-    <div class="field"><label>파트</label><select id="mr">${ROLES.map(r=>`<option ${r===m.role?'selected':''}>${r}</option>`).join('')}</select></div>
-    <div class="mfoot"><button class="btn btn-sm" onclick="closeModal()">취소</button><button class="btn btn-primary btn-sm" onclick="saveMember(${i})">저장</button></div>`);
-};
-window.saveMember=function(i){
-  state.members[i].name=document.getElementById('mn').value.trim()||state.members[i].name;
-  state.members[i].role=document.getElementById('mr').value;
-  saveState();render();closeModal();
-};
-window.delMember=function(i){if(confirm('멤버를 삭제할까요?')){state.members.splice(i,1);saveState();render();}};
-function showAddSetlist(){showModal(`<h3>셋리스트 추가</h3>
-  <div class="field"><label>제목</label><input id="slt" placeholder="5월 공연 셋리스트"></div>
-  <div class="field"><label>곡 목록 (한 줄에 하나)</label><textarea id="slg" placeholder="곡명 1&#10;곡명 2"></textarea></div>
-  <div class="mfoot"><button class="btn btn-sm" onclick="closeModal()">취소</button><button class="btn btn-primary btn-sm" onclick="addSetlist()">추가</button></div>`);}
-function addSetlist(){
-  const title=document.getElementById('slt').value.trim();
-  const songs=document.getElementById('slg').value.split('\n').map(s=>s.trim()).filter(Boolean);
-  if(!title||!songs.length)return;state.setlists.push({title,songs});saveState();render();closeModal();
-}
-window.delSetlist=function(i){if(confirm('삭제할까요?')){state.setlists.splice(i,1);saveState();render();}};
-function showAddSchedule(){
-  const today=new Date().toISOString().split('T')[0];
-  showModal(`<h3>일정 추가</h3>
-    <div class="field"><label>일정 이름</label><input id="sct" placeholder="정기 연습"></div>
-    <div class="field"><label>날짜</label><input id="scd" type="date" value="${today}"></div>
-    <div class="field"><label>시간</label><input id="sctm" placeholder="오후 7시"></div>
-    <div class="field"><label>장소</label><input id="scp" placeholder="합주실 A"></div>
-    <div class="mfoot"><button class="btn btn-sm" onclick="closeModal()">취소</button><button class="btn btn-primary btn-sm" onclick="addSchedule()">추가</button></div>`);
-}
-function addSchedule(){
-  const title=document.getElementById('sct').value.trim();const date=document.getElementById('scd').value;
-  const time=document.getElementById('sctm').value.trim();const place=document.getElementById('scp').value.trim();
-  if(!title||!date)return;state.schedules.push({title,date,time,place});saveState();render();closeModal();
-}
-window.delSchedule=function(i){if(confirm('삭제할까요?')){state.schedules.splice(i,1);saveState();render();}};
-function showAddMemo(){showModal(`<h3>메모 작성</h3>
-  <div class="field"><label>내용</label><textarea id="mob" placeholder="공지, 연습 내용, 아이디어..."></textarea></div>
-  <div class="mfoot"><button class="btn btn-sm" onclick="closeModal()">취소</button><button class="btn btn-primary btn-sm" onclick="addMemo()">작성</button></div>`);}
-function addMemo(){
-  const body=document.getElementById('mob').value.trim();if(!body)return;
-  const now=new Date();
-  const date=`${now.getMonth()+1}/${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-  state.memos.push({author:me.nick,authorId:me.id,body,date});saveState();render();closeModal();
-}
-window.delMemo=function(i){if(confirm('삭제할까요?')){state.memos.splice(i,1);saveState();render();}};
+    function editMember(memberId){ openMemberModal(memberId); }
 
-const quotes = [
-  "눕는 순간 패배다",
-  "잠은 사치다",
-  "오늘도 무수면",
-  "각성 상태 유지 중",
-  "침대는 인테리어다",
-  "우리는 눕지 않는다"
-];
-function setQuote(){
-  const q = quotes[Math.floor(Math.random()*quotes.length)];
-  const el = document.getElementById('sleep-quote');
-  if(el) el.textContent = q;
-}
-setQuote();
+    function openSetlistModal(){
+      if(!me.isAdmin) return;
+      openModal('셋리스트 추가', `
+        <div class="field">
+          <label>제목</label>
+          <input id="setlist-title" placeholder="예: 6월 합주 셋리스트">
+        </div>
+        <div class="field">
+          <label>설명</label>
+          <input id="setlist-desc" placeholder="공연 / 연습 목적 등">
+        </div>
+        <div class="field">
+          <label>곡 목록 (줄바꿈으로 구분)</label>
+          <textarea id="setlist-songs" placeholder="곡명 1&#10;곡명 2&#10;곡명 3"></textarea>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-soft" onclick="closeModal()">취소</button>
+          <button class="btn btn-primary" onclick="saveSetlist()">추가</button>
+        </div>
+      `);
+    }
 
-loadAll();
-</script>
+    async function saveSetlist(){
+      const title = document.getElementById('setlist-title').value.trim();
+      const desc = document.getElementById('setlist-desc').value.trim();
+      const songs = document.getElementById('setlist-songs').value.split('\n').map(v => v.trim()).filter(Boolean);
+      if(!title || !songs.length) return;
+      state.setlists.push({
+        id: crypto.randomUUID(),
+        title, desc, songs,
+        createdAt: new Date().toISOString()
+      });
+      await saveState();
+      closeModal();
+      render();
+    }
+
+    async function removeSetlist(id){
+      if(!confirm('셋리스트를 삭제할까?')) return;
+      state.setlists = state.setlists.filter(v => v.id !== id);
+      await saveState();
+      render();
+    }
+
+    function openScheduleModal(){
+      if(!me.isAdmin) return;
+      const today = new Date().toISOString().slice(0,10);
+      openModal('일정 추가', `
+        <div class="field">
+          <label>일정명</label>
+          <input id="schedule-title" placeholder="예: 정기 합주">
+        </div>
+        <div class="inline">
+          <div class="field">
+            <label>날짜</label>
+            <input id="schedule-date" type="date" value="${today}">
+          </div>
+          <div class="field">
+            <label>시간</label>
+            <input id="schedule-time" placeholder="예: 오후 7시">
+          </div>
+        </div>
+        <div class="field">
+          <label>장소</label>
+          <input id="schedule-place" placeholder="예: 연습실 A">
+        </div>
+        <div class="field">
+          <label>추가 설명</label>
+          <textarea id="schedule-desc" placeholder="준비물, 공지사항 등"></textarea>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-soft" onclick="closeModal()">취소</button>
+          <button class="btn btn-primary" onclick="saveSchedule()">추가</button>
+        </div>
+      `);
+    }
+
+    async function saveSchedule(){
+      const title = document.getElementById('schedule-title').value.trim();
+      const date = document.getElementById('schedule-date').value;
+      const time = document.getElementById('schedule-time').value.trim();
+      const place = document.getElementById('schedule-place').value.trim();
+      const desc = document.getElementById('schedule-desc').value.trim();
+      if(!title || !date) return;
+      state.schedules.push({
+        id: crypto.randomUUID(),
+        title, date, time, place, desc,
+        createdAt: new Date().toISOString()
+      });
+      await saveState();
+      closeModal();
+      render();
+    }
+
+    async function removeSchedule(id){
+      if(!confirm('일정을 삭제할까?')) return;
+      state.schedules = state.schedules.filter(v => v.id !== id);
+      await saveState();
+      render();
+    }
+
+    function openPostModal(defaultNotice = false){
+      openModal(me.isAdmin ? '글 / 공지 작성' : '글 작성', `
+        <div class="field">
+          <label>제목</label>
+          <input id="post-title" placeholder="제목 입력">
+        </div>
+        ${me.isAdmin ? `
+          <div class="field">
+            <label>게시글 유형</label>
+            <select id="post-type">
+              <option value="free" ${defaultNotice ? '' : 'selected'}>자유글</option>
+              <option value="notice" ${defaultNotice ? 'selected' : ''}>공지</option>
+            </select>
+          </div>
+        ` : ''}
+        <div class="field">
+          <label>내용</label>
+          <textarea id="post-body" placeholder="내용 입력"></textarea>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-soft" onclick="closeModal()">취소</button>
+          <button class="btn btn-primary" onclick="savePost()">작성</button>
+        </div>
+      `);
+    }
+
+    async function savePost(){
+      const title = document.getElementById('post-title').value.trim();
+      const body = document.getElementById('post-body').value.trim();
+      const postTypeEl = document.getElementById('post-type');
+      const isNotice = postTypeEl ? postTypeEl.value === 'notice' : false;
+      if(!title || !body) return;
+
+      state.posts.push({
+        id: crypto.randomUUID(),
+        title, body,
+        isNotice: me.isAdmin ? isNotice : false,
+        author: me.nick,
+        authorId: me.id,
+        createdAt: new Date().toISOString()
+      });
+      await saveState();
+      closeModal();
+      page = 'feed';
+      render();
+    }
+
+    async function removePost(id){
+      if(!confirm('게시글을 삭제할까?')) return;
+      state.posts = state.posts.filter(v => v.id !== id);
+      await saveState();
+      render();
+    }
+
+    function setFeedFilter(next){
+      feedFilter = next;
+      render();
+    }
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        page = btn.dataset.page;
+        render();
+      });
+    });
+
+    document.getElementById('login-pw').addEventListener('keydown', e => {
+      if(e.key === 'Enter') doLogin();
+    });
+    document.getElementById('login-id').addEventListener('keydown', e => {
+      if(e.key === 'Enter') document.getElementById('login-pw').focus();
+    });
+
+    document.getElementById('hero-quote').textContent = `“${QUOTES[Math.floor(Math.random()*QUOTES.length)]}”`;
+
+    loadState();
+  </script>
+</body>
+</html>
