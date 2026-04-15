@@ -34,7 +34,6 @@
     }
     button,input,textarea,select{font:inherit}
     a{text-decoration:none;color:inherit}
-
     .auth-wrap{
       min-height:100vh;
       display:grid;
@@ -396,6 +395,59 @@
       color:#ffd796;font-size:11px;font-weight:800;
       margin-right:8px;
     }
+    .comment-wrap{
+      margin-top:14px;
+      padding-top:14px;
+      border-top:1px solid var(--line);
+    }
+    .comment-count{
+      color:#dfe5ff;
+      font-size:12px;
+      font-weight:700;
+      margin-bottom:10px;
+    }
+    .comment-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-bottom:12px;
+    }
+    .comment-item{
+      padding:12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+    }
+    .comment-top{
+      display:flex;justify-content:space-between;gap:10px;align-items:center;
+      margin-bottom:6px;
+    }
+    .comment-author{
+      font-size:12px;font-weight:800;color:#eef2ff;
+    }
+    .comment-date{
+      font-size:11px;color:var(--muted);
+    }
+    .comment-body{
+      font-size:13px;line-height:1.7;color:#eef2ff;white-space:pre-wrap;
+    }
+    .comment-form{
+      display:flex;
+      gap:8px;
+      align-items:flex-start;
+      margin-top:8px;
+    }
+    .comment-input{
+      flex:1;
+      min-height:44px;
+      max-height:140px;
+      resize:vertical;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 13px;
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+    }
 
     .modal-overlay{
       position:fixed;inset:0;
@@ -452,6 +504,8 @@
       .top-actions{justify-content:flex-start}
       .community-name{font-size:24px}
       .topbar h2{font-size:28px}
+      .comment-form{flex-direction:column}
+      .comment-form button{width:100%}
     }
   </style>
 </head>
@@ -463,12 +517,12 @@
         <h1>침대는<br>장식용이다</h1>
         <p>
           이름은 장난 같아도 안은 진짜 커뮤니티처럼. 멤버 관리, 셋리스트, 일정,
-          공지, 자유게시판까지 한곳에서 정리하는 단체 전용 허브.
+          공지, 자유게시판, 댓글까지 한곳에서 정리하는 단체 전용 허브.
         </p>
         <div class="hero-grid">
           <div class="mini-card"><b>공지 & 피드</b><span>중요 공지와 자유 글을 나눠서 운영할 수 있음</span></div>
-          <div class="mini-card"><b>셋리스트 관리</b><span>공연별 곡 정리, 연습 목록 공유 가능</span></div>
-          <div class="mini-card"><b>멤버/일정</b><span>역할, 날짜, 장소까지 한눈에 확인</span></div>
+          <div class="mini-card"><b>댓글 소통</b><span>게시글 아래에서 바로 짧게 반응과 의견을 남길 수 있음</span></div>
+          <div class="mini-card"><b>로그인 유지</b><span>새로고침해도 다시 로그인하지 않도록 저장됨</span></div>
         </div>
       </div>
       <div class="quote" id="hero-quote">“오늘도 침대는 인테리어다.”</div>
@@ -601,12 +655,17 @@
     let memberSearch = '';
 
     function escapeHtml(str=''){
-      return str
+      return String(str)
         .replaceAll('&','&amp;')
         .replaceAll('<','&lt;')
         .replaceAll('>','&gt;')
         .replaceAll('"','&quot;')
         .replaceAll("'","&#39;");
+    }
+
+    function persistSession(){
+      if(me) localStorage.setItem('sleep-community-user', JSON.stringify(me));
+      else localStorage.removeItem('sleep-community-user');
     }
 
     function showAuthError(msg){
@@ -644,6 +703,10 @@
       state.setlists ||= [];
       state.schedules ||= [];
       state.posts ||= [];
+      state.posts = state.posts.map(post => ({
+        ...post,
+        comments: Array.isArray(post.comments) ? post.comments : []
+      }));
     }
 
     async function saveState(){
@@ -669,6 +732,7 @@
 
       if(!ok || !data.ok) return showAuthError(data.message || '가입에 실패했어요.');
       me = data.user;
+      persistSession();
       hideAuthError();
       await loadState();
       enterApp();
@@ -687,6 +751,7 @@
 
       if(!ok || !data.ok) return showAuthError(data.message || '로그인에 실패했어요.');
       me = data.user;
+      persistSession();
       hideAuthError();
       await loadState();
       enterApp();
@@ -694,6 +759,7 @@
 
     function doLogout(){
       me = null;
+      persistSession();
       document.getElementById('app').style.display = 'none';
       document.getElementById('auth').style.display = 'grid';
       document.getElementById('login-id').value = '';
@@ -787,6 +853,39 @@
         .slice(0, limit);
     }
 
+    function commentBlock(post){
+      const comments = Array.isArray(post.comments) ? post.comments : [];
+      return `
+        <div class="comment-wrap">
+          <div class="comment-count">댓글 ${comments.length}개</div>
+          ${comments.length ? `
+            <div class="comment-list">
+              ${comments.map(comment => `
+                <div class="comment-item">
+                  <div class="comment-top">
+                    <div class="comment-author">${escapeHtml(comment.author)}</div>
+                    <div class="comment-date">${formatDateTime(comment.createdAt)}</div>
+                  </div>
+                  <div class="comment-body">${escapeHtml(comment.body)}</div>
+                  ${(me && (me.isAdmin || comment.authorId === me.id)) ? `
+                    <div class="sub-actions" style="margin-top:10px">
+                      <button class="btn btn-soft small-btn" onclick="removeComment('${post.id}','${comment.id}')">삭제</button>
+                    </div>
+                  ` : ''}
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+          ${me ? `
+            <div class="comment-form">
+              <textarea class="comment-input" id="comment-input-${post.id}" placeholder="댓글을 입력해봐"></textarea>
+              <button class="btn btn-primary" onclick="addComment('${post.id}')">등록</button>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
     function renderDashboard(){
       const notices = latestPosts(3, true);
       const recentFeed = latestPosts(4, false);
@@ -812,7 +911,7 @@
             <h3>다가오는 일정</h3>
             ${upcoming.length ? `
               <div class="list">
-                ${upcoming.map((s,i)=>`
+                ${upcoming.map((s)=>`
                   <div class="item">
                     <div class="item-head">
                       <div>
@@ -832,7 +931,7 @@
             <h3>중요 공지</h3>
             ${notices.length ? `
               <div class="list">
-                ${notices.map((p,i)=>feedCard(p, i, false)).join('')}
+                ${notices.map((p)=>feedCard(p, false)).join('')}
               </div>
             ` : `<div class="empty">공지부터 올리면 훨씬 공식 커뮤 느낌이 살아난다.</div>`}
           </div>
@@ -840,7 +939,7 @@
             <h3>최신 게시글</h3>
             ${recentFeed.length ? `
               <div class="list">
-                ${recentFeed.map((p,i)=>feedCard(p, i, false)).join('')}
+                ${recentFeed.map((p)=>feedCard(p, false)).join('')}
               </div>
             ` : `<div class="empty">아직 글이 없다. 첫 글을 남겨보자.</div>`}
           </div>
@@ -848,8 +947,7 @@
       `;
     }
 
-    function feedCard(post, idx, withActions = true){
-      const realIndex = state.posts.findIndex(p => p.id === post.id);
+    function feedCard(post, withActions = true){
       const canDelete = me && (me.isAdmin || post.authorId === me.id);
       return `
         <div class="item feed-card">
@@ -865,6 +963,7 @@
             ` : ''}
           </div>
           <div class="feed-body">${escapeHtml(post.body)}</div>
+          ${commentBlock(post)}
         </div>
       `;
     }
@@ -884,7 +983,7 @@
           <div class="muted" style="font-size:13px">최신순 정렬</div>
         </div>
         ${posts.length ? `
-          <div class="list">${posts.map(feedCard).join('')}</div>
+          <div class="list">${posts.map(post=>feedCard(post, true)).join('')}</div>
         ` : `<div class="empty">아직 게시글이 없다.</div>`}
       `;
     }
@@ -1189,7 +1288,8 @@
         isNotice: me.isAdmin ? isNotice : false,
         author: me.nick,
         authorId: me.id,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        comments: []
       });
       await saveState();
       closeModal();
@@ -1200,6 +1300,35 @@
     async function removePost(id){
       if(!confirm('게시글을 삭제할까?')) return;
       state.posts = state.posts.filter(v => v.id !== id);
+      await saveState();
+      render();
+    }
+
+    async function addComment(postId){
+      const input = document.getElementById(`comment-input-${postId}`);
+      if(!input) return;
+      const body = input.value.trim();
+      if(!body) return;
+
+      const post = state.posts.find(v => v.id === postId);
+      if(!post) return;
+      post.comments ||= [];
+      post.comments.push({
+        id: crypto.randomUUID(),
+        author: me.nick,
+        authorId: me.id,
+        body,
+        createdAt: new Date().toISOString()
+      });
+      await saveState();
+      render();
+    }
+
+    async function removeComment(postId, commentId){
+      const post = state.posts.find(v => v.id === postId);
+      if(!post) return;
+      post.comments ||= [];
+      post.comments = post.comments.filter(c => c.id !== commentId);
       await saveState();
       render();
     }
@@ -1225,7 +1354,23 @@
 
     document.getElementById('hero-quote').textContent = `“${QUOTES[Math.floor(Math.random()*QUOTES.length)]}”`;
 
-    loadState();
+    async function boot(){
+      await loadState();
+      const saved = localStorage.getItem('sleep-community-user');
+      if(saved){
+        try{
+          me = JSON.parse(saved);
+          if(me && me.nick){
+            enterApp();
+            return;
+          }
+        }catch(e){}
+      }
+      document.getElementById('auth').style.display = 'grid';
+      document.getElementById('app').style.display = 'none';
+    }
+
+    boot();
   </script>
 </body>
 </html>

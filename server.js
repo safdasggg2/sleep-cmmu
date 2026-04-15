@@ -15,12 +15,19 @@ let state = {
   posts: []
 };
 
+function normalizePosts(posts) {
+  return Array.isArray(posts) ? posts.map(post => ({
+    ...post,
+    comments: Array.isArray(post.comments) ? post.comments : []
+  })) : [];
+}
+
 function normalizeState(next = {}) {
   return {
     members: Array.isArray(next.members) ? next.members : [],
     setlists: Array.isArray(next.setlists) ? next.setlists : [],
     schedules: Array.isArray(next.schedules) ? next.schedules : [],
-    posts: Array.isArray(next.posts) ? next.posts : []
+    posts: normalizePosts(next.posts)
   };
 }
 
