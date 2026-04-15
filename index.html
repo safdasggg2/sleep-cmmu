@@ -206,22 +206,7 @@ async function doLogin(){
   if(!data.ok){showErr(data.message||'로그인에 실패했어요.');return;}
   me={id:data.user.id,nick:data.user.nick,isAdmin:data.user.isAdmin};
   hideErr();
-  await const quotes = [
-  "눕는 순간 패배다",
-  "잠은 사치다",
-  "오늘도 무수면",
-  "각성 상태 유지 중",
-  "침대는 인테리어다",
-  "우리는 눕지 않는다"
-];
-function setQuote(){
-  const q = quotes[Math.floor(Math.random()*quotes.length)];
-  const el = document.getElementById('sleep-quote');
-  if(el) el.textContent = q;
-}
-setQuote();
-
-loadAll();
+  await loadAll();
   enterApp();
 }
 async function doSignup(){
@@ -385,6 +370,21 @@ function addMemo(){
   state.memos.push({author:me.nick,authorId:me.id,body,date});saveState();render();closeModal();
 }
 window.delMemo=function(i){if(confirm('삭제할까요?')){state.memos.splice(i,1);saveState();render();}};
+
+const quotes = [
+  "눕는 순간 패배다",
+  "잠은 사치다",
+  "오늘도 무수면",
+  "각성 상태 유지 중",
+  "침대는 인테리어다",
+  "우리는 눕지 않는다"
+];
+function setQuote(){
+  const q = quotes[Math.floor(Math.random()*quotes.length)];
+  const el = document.getElementById('sleep-quote');
+  if(el) el.textContent = q;
+}
+setQuote();
 
 loadAll();
 </script>
